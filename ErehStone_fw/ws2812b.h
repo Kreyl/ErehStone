@@ -29,11 +29,14 @@
 #define T0H_N_4MHz          1
 #define T1H_N_4MHz          3
 #define T_TOTAL_N_4MHz      18
+
+#define T0H_N_16MHz         4
+#define T1H_N_16MHz         12
+#define T_TOTAL_N_16MHz     27
+
 #define T0H_N_24MHz         10
 #define T1H_N_24MHz         19
 #define T_TOTAL_N_24MHz     27
-
-enum ClrSetupMode_t {csmOneByOne, csmSimultaneously};
 
 #if 1 // ============================= LED Params ==============================
 class LedParams_t {
@@ -78,24 +81,15 @@ class LedWs_t {
 private:
     PinOutputPWM_t<T_TOTAL_N_4MHz, invNotInverted, omOpenDrain> TxTmr{LEDWS_GPIO, LEDWS_PIN, LEDWS_TMR, LEDWS_TMR_CH};
     uint8_t T0H_N = T0H_N_4MHz, T1H_N = T1H_N_4MHz;
-    virtual_timer_t ITmr;
-    uint8_t BitBuf[TOTAL_BIT_CNT], *PBit;
-    uint8_t Indx;
-    Color_t IClr[LED_CNT];
-    ClrSetupMode_t IMode;
+    uint8_t BitBuf[TOTAL_BIT_CNT];
+    uint8_t *PBit;
     void AppendBitsMadeOfByte(uint8_t Byte);
-    void ISetCurrentColors();
-    uint32_t ICalcDelay(uint16_t AValue, uint32_t Smooth) { return (uint32_t)((Smooth / (AValue+4)) + 1); }
-    uint32_t ICalcDelayByIndx(uint32_t n);
 public:
-    Color_t DesiredClr[LED_CNT];
-    uint32_t SmoothValue[LED_CNT];
     void Init();
     void OnAHBFreqChange();
-    void SetCommonColor(Color_t Clr);
-    void StartProcess(ClrSetupMode_t AMode = csmSimultaneously);
-    void SetCommonColorSmoothly(Color_t Clr, uint32_t Smooth, ClrSetupMode_t AMode = csmSimultaneously);
     // Inner use
+    Color_t ICurrentClr[LED_CNT];
+    void ISetCurrentColors();
     void IStopTx() { TxTmr.Set(0); TxTmr.Disable(); }
     void ITmrHandlerI();
 };

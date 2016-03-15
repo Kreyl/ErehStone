@@ -5,20 +5,24 @@
  *      Author: Kreyl
  */
 
-#ifndef COLOR_H_
-#define COLOR_H_
+#pragma once
 
 #include "inttypes.h"
 
 // Mixing two colors
 #define ClrMix(C, B, L)     ((C * L + B * (255 - L)) / 255)
 
+// Smooth delay
+static inline uint32_t CalcDelay(uint16_t AValue, uint32_t Smooth) {
+    return (uint32_t)((Smooth / (AValue+4)) + 1);
+}
+
 struct Color_t {
     union {
         struct {
             uint8_t R, G, B;
         };
-        uint32_t DWord32;
+//        uint32_t DWord32;
     };
     bool operator == (const Color_t &AColor) { return ((R == AColor.R) and (G == AColor.G) and (B == AColor.B)); }
     bool operator != (const Color_t &AColor) { return ((R != AColor.R) or  (G != AColor.G) or  (B != AColor.B)); }
@@ -165,5 +169,3 @@ const Color_t ColorTable[] = {
 };
 #define COLOR_TABLE_SZ  countof(ColorTable)
 #endif
-
-#endif /* COLOR_H_ */

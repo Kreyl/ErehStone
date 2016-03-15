@@ -55,25 +55,25 @@ void LedWs_t::Init() {
 void LedWs_t::OnAHBFreqChange() {
     TxTmr.Disable();
     uint32_t Freq = Clk.GetTmrClkFreq(LEDWS_TMR);
-    if(Freq == 24000000) {
-        TxTmr.SetTopValue(T_TOTAL_N_24MHz);
-        T0H_N = T0H_N_24MHz;
-        T1H_N = T1H_N_24MHz;
-    }
-    else {
+    if(Freq == 4000000) {
         TxTmr.SetTopValue(T_TOTAL_N_4MHz);
         T0H_N = T0H_N_4MHz;
         T1H_N = T1H_N_4MHz;
     }
+    else if(Freq == 16000000) {
+        TxTmr.SetTopValue(T_TOTAL_N_16MHz);
+        T0H_N = T0H_N_16MHz;
+        T1H_N = T1H_N_16MHz;
+    }
+    else if(Freq == 24000000) {
+        TxTmr.SetTopValue(T_TOTAL_N_24MHz);
+        T0H_N = T0H_N_24MHz;
+        T1H_N = T1H_N_24MHz;
+    }
     TxTmr.GenerateUpdateEvt();
     TxTmr.Enable();
 }
-
-void LedWs_t::SetCommonColor(Color_t Clr) {
-    for(uint32_t i=0; i<LED_CNT; i++) IClr[i] = Clr;
-    ISetCurrentColors();
-}
-
+/*
 void LedWs_t::SetCommonColorSmoothly(Color_t Clr, uint32_t Smooth, ClrSetupMode_t AMode) {
     chVTReset(&ITmr);
     IMode = AMode;
@@ -138,6 +138,7 @@ void LedWs_t::ITmrHandlerI() {
 //    Uart.Printf("I=%u; D=%u\r", Indx, Delay);
     chVTSetI(&ITmr, MS2ST(Delay), LedTmrCallback, NULL);
 }
+*/
 
 void LedWs_t::AppendBitsMadeOfByte(uint8_t Byte) {
     for(uint8_t i=0; i<8; i++) {
@@ -159,13 +160,13 @@ void LedWs_t::ISetCurrentColors() {
     PBit = &BitBuf[RST_BIT_CNT];
 //    PBit = BitBuf;  // debug
     for(uint32_t i=0; i<LED_CNT; i++) {
-        AppendBitsMadeOfByte(IClr[i].G);
-        AppendBitsMadeOfByte(IClr[i].R);
-        AppendBitsMadeOfByte(IClr[i].B);
+        AppendBitsMadeOfByte(ICurrentClr[i].G);
+        AppendBitsMadeOfByte(ICurrentClr[i].R);
+        AppendBitsMadeOfByte(ICurrentClr[i].B);
     }
 
     // Change first 1 duration
-//    BitBuf[0] -= 2;
+    BitBuf[0] -= 2;
 
 //    for(uint8_t i=0; i<TOTAL_BIT_CNT; i++) Uart.PrintfI("%u ", BitBuf[i]);
 //    Uart.PrintfI("\r");
@@ -175,26 +176,6 @@ void LedWs_t::ISetCurrentColors() {
     dmaStreamSetMode(LEDWS_DMA, LED_DMA_MODE);
     dmaStreamEnable(LEDWS_DMA);
 
-
 //    chSysLockFromIsr();
     TxTmr.Enable();
-//    dmaWaitCompletion(LED_DMA_STREAM);
-//    IStopTx();
-//    chSysUnlockFromIsr();
-}
-
-uint32_t LedWs_t::ICalcDelayByIndx(uint32_t n) {
-    uint32_t DelayR = (IClr[n].R == DesiredClr[n].R)? 0 : ICalcDelay(IClr[n].R, SmoothValue[n]);
-    uint32_t DelayG = (IClr[n].G == DesiredClr[n].G)? 0 : ICalcDelay(IClr[n].G, SmoothValue[n]);
-    uint32_t DelayB = (IClr[n].B == DesiredClr[n].B)? 0 : ICalcDelay(IClr[n].B, SmoothValue[n]);
-//    Uart.Printf("I=%u; R=%u/%u; G=%u/%u; B=%u/%u\r",
-//            Indx,
-//            IClr[Indx].Red,   DesiredClr[Indx].Red,
-//            IClr[Indx].Green, DesiredClr[Indx].Green,
-//            IClr[Indx].Blue,  DesiredClr[Indx].Blue);
-//    Uart.Printf("DR=%u; DG=%u; DB=%u\r", DelayR, DelayG, DelayB);
-    uint32_t Rslt = DelayR;
-    if(DelayG > Rslt) Rslt = DelayG;
-    if(DelayB > Rslt) Rslt = DelayB;
-    return Rslt;
 }

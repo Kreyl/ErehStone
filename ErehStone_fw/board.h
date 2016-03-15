@@ -21,7 +21,7 @@
 #define I2C_REQUIRED    FALSE
 #define ADC_REQUIRED    FALSE
 
-#define LED_CNT         150   // Number of WS2812 LEDs
+#define LED_CNT         40   // Number of WS2812 LEDs
 
 #if 1 // ========================== GPIO =======================================
 // UART

@@ -11,14 +11,15 @@
 #include "Sequences.h"
 #include "radio_lvl1.h"
 #include "Sequences.h"
-#include "ws2812b.h"
+#include "Effects.h"
 
 App_t App;
 
 int main(void) {
     // ==== Init Vcore & clock system ====
     SetupVCore(vcore1V5);
-    Clk.SetMSI4MHz();
+//    Clk.SetMSI4MHz();
+    Clk.SwitchToHSI();
     Clk.UpdateFreqValues();
 
     // Init OS
@@ -31,7 +32,7 @@ int main(void) {
     Uart.Printf("\r%S %S\r", APP_NAME , BUILD_TIME);
     Clk.PrintFreqs();
 
-    LedWs.Init();
+    Effects.Init();
 
     if(Radio.Init() == OK) {
 
@@ -46,15 +47,19 @@ int main(void) {
 
 __noreturn
 void App_t::ITask() {
+//    Effects.AllTogetherSmoothly(clGreen, 360);
     while(true) {
-        chThdSleepMilliseconds(360);
-        LedWs.SetCommonColor((Color_t){0,255,0});
-        chThdSleepMilliseconds(360);
-        LedWs.SetCommonColor((Color_t){255,0,0});
-        chThdSleepMilliseconds(360);
-        LedWs.SetCommonColor((Color_t){0,0,255});
+        Effects.AllTogetherSmoothly(clGreen, 360);
+        chThdSleepMilliseconds(2700);
+        Effects.AllTogetherSmoothly(clBlack, 360);
+        chThdSleepMilliseconds(2700);
 
 //        __unused eventmask_t Evt = chEvtWaitAny(ALL_EVENTS);
+
+//        if(Evt & EVT_LEDS_DONE) {
+//
+//        }
+
 #if UART_RX_ENABLED
         if(EvtMsk & EVTMSK_UART_NEW_CMD) {
             OnCmd((Shell_t*)&Uart);
