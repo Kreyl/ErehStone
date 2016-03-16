@@ -13,13 +13,15 @@
 #include "Sequences.h"
 #include "Effects.h"
 
+#include "ws2812b.h"
+
 App_t App;
 
 int main(void) {
     // ==== Init Vcore & clock system ====
     SetupVCore(vcore1V5);
-//    Clk.SetMSI4MHz();
-    Clk.SwitchToHSI();
+    Clk.SetMSI4MHz();
+//    Clk.SwitchToHSI();
     Clk.UpdateFreqValues();
 
     // Init OS
@@ -49,6 +51,13 @@ __noreturn
 void App_t::ITask() {
 //    Effects.AllTogetherSmoothly(clGreen, 360);
     while(true) {
+//        Effects.AllTogetherNow(clGreen);
+//        chThdSleepMilliseconds(270);
+//        Effects.AllTogetherNow(clRed);
+//        chThdSleepMilliseconds(270);
+//        Effects.AllTogetherNow(clBlue);
+//        chThdSleepMilliseconds(270);
+
         Effects.AllTogetherSmoothly(clGreen, 360);
         chThdSleepMilliseconds(2700);
         Effects.AllTogetherSmoothly(clBlack, 360);

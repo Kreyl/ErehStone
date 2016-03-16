@@ -21,7 +21,7 @@
 #define I2C_REQUIRED    FALSE
 #define ADC_REQUIRED    FALSE
 
-#define LED_CNT         40   // Number of WS2812 LEDs
+#define LED_CNT         150   // Number of WS2812 LEDs
 
 #if 1 // ========================== GPIO =======================================
 // UART
@@ -32,12 +32,10 @@
 
 // LEDs
 #define LEDWS_GPIO      GPIOB
-#define LEDWS_PIN       5
+#define LEDWS_PIN       15
 #endif
 
 #if 1 // ========================= Timer =======================================
-#define LEDWS_TMR       TIM3
-#define LEDWS_TMR_CH    2
 #endif // Timer
 
 #if I2C_REQUIRED // ====================== I2C =================================
@@ -45,6 +43,7 @@
 #endif
 
 #if 1 // =========================== SPI =======================================
+#define LEDWS_SPI       SPI2
 #endif
 
 #if 1 // ========================== USART ======================================
@@ -81,7 +80,7 @@
 #define UART_DMA_RX     STM32_DMA1_STREAM5
 #define UART_DMA_CHNL   0   // Dummy
 
-#define LEDWS_DMA       STM32_DMA1_STREAM3  // TIM3 update
+#define LEDWS_DMA       STM32_DMA1_STREAM5  // SPI2 TX
 
 #if I2C_REQUIRED // ==== I2C ====
 #define I2C_ACC_DMA_TX  STM32_DMA1_STREAM4
