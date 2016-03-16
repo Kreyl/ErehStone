@@ -38,13 +38,26 @@ int main(void) {
     Effects.Init();
 
     if(Radio.Init() == OK) {
-
+        Effects.AllTogetherSmoothly(clGreen, 45);
+        chEvtWaitAny(EVT_LEDS_DONE);
+        Effects.AllTogetherSmoothly(clBlack, 45);
+        chEvtWaitAny(EVT_LEDS_DONE);
     }
     else {
-        chThdSleepMilliseconds(2700);
+        Effects.AllTogetherNow(clRed);
+        chThdSleepMilliseconds(180);
+        Effects.AllTogetherNow(clBlack);
+        chThdSleepMilliseconds(180);
+        Effects.AllTogetherNow(clRed);
+        chThdSleepMilliseconds(180);
+        Effects.AllTogetherNow(clBlack);
+        chThdSleepMilliseconds(180);
+        Effects.AllTogetherNow(clRed);
+        chThdSleepMilliseconds(180);
+        Effects.AllTogetherNow(clBlack);
     }
 
-    Effects.ChunkRunningRandom(clGreen, 3, 45);
+    Effects.ChunkRunningRandom(clGreen, 1, 45);
 
     // Main cycle
     App.ITask();
@@ -79,11 +92,7 @@ void App_t::ITask() {
 //        Effects.AllTogetherSmoothly(clBlack, 180);
 //        chEvtWaitAny(EVT_LEDS_DONE);
 
-//        __unused eventmask_t Evt = chEvtWaitAny(ALL_EVENTS);
-
-//        if(Evt & EVT_LEDS_DONE) {
-//
-//        }
+        __unused eventmask_t Evt = chEvtWaitAny(ALL_EVENTS);
 
 #if UART_RX_ENABLED
         if(EvtMsk & EVTMSK_UART_NEW_CMD) {
@@ -92,9 +101,9 @@ void App_t::ITask() {
         }
 #endif
 
-#if 0 // ==== Radio cmd ====
+#if 1 // ==== Radio cmd ====
         if(Evt & EVT_RADIO_NEW_CMD) {
-
+            Effects.AllTogetherSmoothly(clBlack, 1800);
         }
 #endif
     } // while true

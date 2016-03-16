@@ -42,9 +42,9 @@ __noreturn
 void rLevel1_t::ITask() {
     while(true) {
         int8_t Rssi;
-        if(CC.ReceiveSync(360, &Pkt, &Rssi) == OK) {
-            Uart.Printf("Rssi=%d\r", Rssi);
-            if(Pkt.DWord == PKT_WORD) {
+        if(CC.ReceiveSync(90, &Pkt, &Rssi) == OK) {
+//            Uart.Printf("Rssi=%d\r", Rssi);
+            if(Pkt.DWord == 17) {
                 App.SignalEvt(EVT_RADIO_NEW_CMD);
             }
         }
@@ -124,7 +124,7 @@ uint8_t rLevel1_t::Init() {
     if(CC.Init() == OK) {
         CC.SetTxPower(CC_Pwr0dBm);
         CC.SetPktSize(RPKT_LEN);
-        CC.SetChannel(RCHNL_MIN);
+        CC.SetChannel(ID2RCHNL(17));
         // Thread
         PThd = chThdCreateStatic(warLvl1Thread, sizeof(warLvl1Thread), HIGHPRIO, (tfunc_t)rLvl1Thread, NULL);
         return OK;

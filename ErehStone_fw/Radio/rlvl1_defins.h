@@ -58,7 +58,7 @@ struct rPkt_t {
 #define PKT_WORD        0xCA115EA1
 
 #if 1 // ======================= Channels & cycles =============================
-#define RCHNL_MIN       4
+#define RCHNL_MIN       5
 #define ID2RCHNL(ID)    (RCHNL_MIN + ID)
 
 #define RCHNL_DEFAULT   4
