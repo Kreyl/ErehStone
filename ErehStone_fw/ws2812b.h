@@ -23,8 +23,14 @@
                         | STM32_DMA_CR_TCIE     /* Enable Transmission Complete IRQ */
 
 // Tx timings: bit cnt
-#define SEQ_1               0b11111000
-#define SEQ_0               0b11000000
+#define SEQ_1               0b11111000  // 0xF8
+#define SEQ_0               0b11000000  // 0xC0
+
+#define SEQ_00              0xC0C0
+#define SEQ_01              0xC0F8
+#define SEQ_10              0xF8C0
+#define SEQ_11              0xF8F8
+
 #define SEQ_LEN             8
 #define RST_W_CNT           30 // zero words to produce reset
 
@@ -37,12 +43,10 @@ class LedWs_t {
 private:
     Spi_t ISpi;
     uint16_t IBuf[TOTAL_W_CNT];
-    uint16_t *PBuf, BitsLeft;
+    uint16_t *PBuf;
     void AppendBitsMadeOfByte(uint8_t Byte);
-    void AppendOnes();
 public:
     void Init();
-    void OnAHBFreqChange();
     // Inner use
     Color_t ICurrentClr[LED_CNT];
     void ISetCurrentColors();
