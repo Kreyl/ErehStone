@@ -20,8 +20,9 @@ App_t App;
 int main(void) {
     // ==== Init Vcore & clock system ====
     SetupVCore(vcore1V5);
-    Clk.SetMSI4MHz();
-//    Clk.SwitchToHSI();
+//    Clk.SetMSI4MHz();
+    Clk.SetupFlashLatency(16);
+    Clk.SwitchToHSI();
     Clk.UpdateFreqValues();
 
     // Init OS
@@ -43,6 +44,8 @@ int main(void) {
         chThdSleepMilliseconds(2700);
     }
 
+//    Effects.ChunkRunningRandom(clGreen, 1, 0);
+
     // Main cycle
     App.ITask();
 }
@@ -51,6 +54,7 @@ __noreturn
 void App_t::ITask() {
 //    Effects.AllTogetherSmoothly(clGreen, 360);
     while(true) {
+//        chThdSleepMilliseconds(2700);
 //        Effects.AllTogetherNow(clGreen);
 //        chThdSleepMilliseconds(270);
 //        Effects.AllTogetherNow(clRed);
@@ -58,10 +62,22 @@ void App_t::ITask() {
 //        Effects.AllTogetherNow(clBlue);
 //        chThdSleepMilliseconds(270);
 
-        Effects.AllTogetherSmoothly(clGreen, 360);
-        chThdSleepMilliseconds(2700);
-        Effects.AllTogetherSmoothly(clBlack, 360);
-        chThdSleepMilliseconds(2700);
+        Effects.AllTogetherSmoothly(clGreen, 180);
+        chEvtWaitAny(EVT_LEDS_DONE);
+        Effects.AllTogetherSmoothly(clRed, 180);
+        chEvtWaitAny(EVT_LEDS_DONE);
+        Effects.AllTogetherSmoothly(clBlue, 180);
+        chEvtWaitAny(EVT_LEDS_DONE);
+        Effects.AllTogetherSmoothly(clYellow, 180);
+        chEvtWaitAny(EVT_LEDS_DONE);
+        Effects.AllTogetherSmoothly(clCyan, 180);
+        chEvtWaitAny(EVT_LEDS_DONE);
+        Effects.AllTogetherSmoothly(clMagenta, 180);
+        chEvtWaitAny(EVT_LEDS_DONE);
+        Effects.AllTogetherSmoothly(clWhite, 180);
+        chEvtWaitAny(EVT_LEDS_DONE);
+        Effects.AllTogetherSmoothly(clBlack, 180);
+        chEvtWaitAny(EVT_LEDS_DONE);
 
 //        __unused eventmask_t Evt = chEvtWaitAny(ALL_EVENTS);
 

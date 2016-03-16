@@ -6,10 +6,16 @@
  */
 
 #include "Effects.h"
-#include "ws2812b.h"
 #include "main.h"
 
 Effects_t Effects;
+
+#define CHUNK_CNT   3
+static LedChunk_t Chunk[CHUNK_CNT] = {
+        {0, 5},
+        {6, 10},
+        {11, 16}
+};
 
 static THD_WORKING_AREA(waEffectsThread, 256);
 __noreturn
@@ -38,6 +44,8 @@ void Effects_t::ITask() {
                 }
                 else chThdSleepMilliseconds(Delay);
             } break;
+
+            case effChunkRunningRandom: IProcessChunkRandom(); break;
         } // switch
     } // while true
 }
@@ -70,6 +78,32 @@ void Effects_t::AllTogetherSmoothly(Color_t Color, uint32_t ASmoothValue) {
     }
 }
 
+void Effects_t::ChunkRunningRandom(Color_t Color, uint32_t NLeds, uint32_t ASmoothValue) {
+    chSysLock();
+    for(uint32_t i=0; i<CHUNK_CNT; i++) {
+        Chunk[i].Color = Color;
+        Chunk[i].NLeds = NLeds;
+        Chunk[i].StartOver();
+    }
+    for(uint32_t i=0; i<LED_CNT; i++) {
+        SmoothValue[i] = ASmoothValue;
+    }
+    IState = effChunkRunningRandom;
+    chSchWakeupS(PThd, MSG_OK);
+    chSysUnlock();
+}
+
+void Effects_t::IProcessChunkRandom() {
+    uint32_t Delay = 0;
+    for(uint32_t i=0; i<CHUNK_CNT; i++) {
+        uint32_t ChunkDelay = Chunk[i].ProcessAndGetDelay();
+        if(ChunkDelay > Delay) Delay = ChunkDelay;
+    }
+    LedWs.ISetCurrentColors();
+//    Uart.Printf("%u\r", Delay);
+    chThdSleepMilliseconds(MS2ST(Delay));
+}
+
 uint32_t Effects_t::ICalcDelayN(uint32_t n) {
     uint32_t DelayR = (LedWs.ICurrentClr[n].R == DesiredClr[n].R)? 0 : CalcDelay(LedWs.ICurrentClr[n].R, SmoothValue[n]);
     uint32_t DelayG = (LedWs.ICurrentClr[n].G == DesiredClr[n].G)? 0 : CalcDelay(LedWs.ICurrentClr[n].G, SmoothValue[n]);
@@ -85,3 +119,37 @@ uint32_t Effects_t::ICalcDelayN(uint32_t n) {
     if(DelayB > Rslt) Rslt = DelayB;
     return Rslt;
 }
+
+#if 1 // ============================== LedChunk ===============================
+uint32_t LedChunk_t::ProcessAndGetDelay() {
+    if(LedWs.ICurrentClr[Current] == Color) {   // Go on if done with current
+        Effects.DesiredClr[Current] = clBlack;
+        GetNextCurrent();
+        Effects.DesiredClr[Current] = Color;
+    }
+    // Iterate Leds
+    uint32_t Delay = 0;
+    for(int i=Start; i<=End; i++) {
+        uint32_t tmp = Effects.ICalcDelayN(i);  // }
+        if(tmp > Delay) Delay = tmp;            // } Calculate Delay
+        if(Delay!= 0) LedWs.ICurrentClr[i].Adjust(&Effects.DesiredClr[i]); // Adjust current color
+    }
+    return Delay;
+}
+
+void LedChunk_t::StartOver() {
+    Current = Start; //Random(Start, End);
+    Effects.DesiredClr[Current] = Color;
+}
+
+void LedChunk_t::GetNextCurrent() {
+    if(End > Start) {
+        Current++;
+        if(Current > End) Current = Start;
+    }
+    else {
+        Current--;
+        if(Current < Start) Current = End;
+    }
+}
+#endif

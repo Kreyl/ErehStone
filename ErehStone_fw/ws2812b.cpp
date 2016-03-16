@@ -15,7 +15,6 @@ extern "C" {
 // Wrapper for Tx Completed IRQ
 void LedTxcIrq(void *p, uint32_t flags) {
     dmaStreamDisable(LEDWS_DMA);
-//    LedWs.IStopTx();
 //    Uart.PrintfI("Irq\r");
 }
 } // "C"
@@ -26,12 +25,10 @@ void LedWs_t::Init() {
     ISpi.Enable();
     ISpi.EnableTxDma();
 
-    Uart.Printf("W_Cnt: %u\r", TOTAL_W_CNT);
-
 //    OnAHBFreqChange();
 
     // Zero buffer
-    for(uint32_t i=0; i<RST_W_CNT_4MHz; i++) IBuf[i] = 0;
+    for(uint32_t i=0; i<RST_W_CNT; i++) IBuf[i] = 0;
 
     // ==== DMA ====
     dmaStreamAllocate     (LEDWS_DMA, IRQ_PRIO_LOW, LedTxcIrq, NULL);
@@ -162,11 +159,7 @@ void LedWs_t::AppendBitsMadeOfByte(uint8_t Byte) {
 }
 
 void LedWs_t::AppendOnes() {
-    if(BitsLeft == 0) {
-        PBuf++;
-        *PBuf = 0xFFFF;
-    }
-    else {
+    if(BitsLeft != 0) {
         uint16_t w = 0;
         for(uint8_t i=0; i<BitsLeft; i++) {
             w <<= 1;
@@ -180,9 +173,8 @@ void LedWs_t::AppendOnes() {
 
 void LedWs_t::ISetCurrentColors() {
     // Fill bit buffer
-    PBuf = &IBuf[RST_W_CNT_4MHz];
+    PBuf = &IBuf[RST_W_CNT];
     BitsLeft = 16;
-
     for(uint32_t i=0; i<LED_CNT; i++) {
         AppendBitsMadeOfByte(ICurrentClr[i].G);
         AppendBitsMadeOfByte(ICurrentClr[i].R);

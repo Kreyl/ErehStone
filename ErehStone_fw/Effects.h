@@ -10,22 +10,43 @@
 #include "board.h"
 #include "ch.h"
 #include "color.h"
+#include "ws2812b.h"
 
-enum EffState_t {effIdle, effAllSmoothly};
+enum EffState_t {effIdle, effAllSmoothly, effChunkRunningRandom};
+
+class LedChunk_t {
+private:
+    int Current;
+    void GetNextCurrent();
+public:
+    int Start, End, NLeds;
+    Color_t Color;
+    LedChunk_t(int AStart, int AEnd) {
+        Start = AStart;
+        End = AEnd;
+        NLeds = 1;
+        Current = AStart;
+        Color = clBlack;
+    }
+    uint32_t ProcessAndGetDelay();
+    void StartOver();
+};
 
 class Effects_t {
 private:
     thread_t *PThd;
     EffState_t IState;
-    Color_t DesiredClr[LED_CNT];
     uint32_t SmoothValue[LED_CNT];
-    uint32_t ICalcDelayN(uint32_t n);
+    void IProcessChunkRandom();
 public:
     void Init();
     // Effects
     void AllTogetherNow(Color_t Color);
     void AllTogetherSmoothly(Color_t Color, uint32_t ASmoothValue);
+    void ChunkRunningRandom(Color_t Color, uint32_t NLeds, uint32_t ASmoothValue);
     // Inner use
+    uint32_t ICalcDelayN(uint32_t n);
+    Color_t DesiredClr[LED_CNT];
     void ITask();
 };
 
