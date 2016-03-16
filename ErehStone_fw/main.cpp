@@ -44,7 +44,7 @@ int main(void) {
         chThdSleepMilliseconds(2700);
     }
 
-//    Effects.ChunkRunningRandom(clGreen, 1, 0);
+    Effects.ChunkRunningRandom(clYellow, 1, 0);
 
     // Main cycle
     App.ITask();
@@ -62,22 +62,22 @@ void App_t::ITask() {
 //        Effects.AllTogetherNow(clBlue);
 //        chThdSleepMilliseconds(270);
 
-        Effects.AllTogetherSmoothly(clGreen, 180);
-        chEvtWaitAny(EVT_LEDS_DONE);
-        Effects.AllTogetherSmoothly(clRed, 180);
-        chEvtWaitAny(EVT_LEDS_DONE);
-        Effects.AllTogetherSmoothly(clBlue, 180);
-        chEvtWaitAny(EVT_LEDS_DONE);
-        Effects.AllTogetherSmoothly(clYellow, 180);
-        chEvtWaitAny(EVT_LEDS_DONE);
-        Effects.AllTogetherSmoothly(clCyan, 180);
-        chEvtWaitAny(EVT_LEDS_DONE);
-        Effects.AllTogetherSmoothly(clMagenta, 180);
-        chEvtWaitAny(EVT_LEDS_DONE);
-        Effects.AllTogetherSmoothly(clWhite, 180);
-        chEvtWaitAny(EVT_LEDS_DONE);
-        Effects.AllTogetherSmoothly(clBlack, 180);
-        chEvtWaitAny(EVT_LEDS_DONE);
+//        Effects.AllTogetherSmoothly(clGreen, 180);
+//        chEvtWaitAny(EVT_LEDS_DONE);
+//        Effects.AllTogetherSmoothly(clRed, 180);
+//        chEvtWaitAny(EVT_LEDS_DONE);
+//        Effects.AllTogetherSmoothly(clBlue, 180);
+//        chEvtWaitAny(EVT_LEDS_DONE);
+//        Effects.AllTogetherSmoothly(clYellow, 180);
+//        chEvtWaitAny(EVT_LEDS_DONE);
+//        Effects.AllTogetherSmoothly(clCyan, 180);
+//        chEvtWaitAny(EVT_LEDS_DONE);
+//        Effects.AllTogetherSmoothly(clMagenta, 180);
+//        chEvtWaitAny(EVT_LEDS_DONE);
+//        Effects.AllTogetherSmoothly(clWhite, 180);
+//        chEvtWaitAny(EVT_LEDS_DONE);
+//        Effects.AllTogetherSmoothly(clBlack, 180);
+//        chEvtWaitAny(EVT_LEDS_DONE);
 
 //        __unused eventmask_t Evt = chEvtWaitAny(ALL_EVENTS);
 

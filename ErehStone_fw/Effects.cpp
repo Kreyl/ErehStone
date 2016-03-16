@@ -12,7 +12,7 @@ Effects_t Effects;
 
 #define CHUNK_CNT   3
 static LedChunk_t Chunk[CHUNK_CNT] = {
-        {0, 5},
+        {5, 0},
         {6, 10},
         {11, 16}
 };
@@ -93,6 +93,8 @@ void Effects_t::ChunkRunningRandom(Color_t Color, uint32_t NLeds, uint32_t ASmoo
     chSysUnlock();
 }
 
+uint32_t t=0;
+
 void Effects_t::IProcessChunkRandom() {
     uint32_t Delay = 0;
     for(uint32_t i=0; i<CHUNK_CNT; i++) {
@@ -100,8 +102,7 @@ void Effects_t::IProcessChunkRandom() {
         if(ChunkDelay > Delay) Delay = ChunkDelay;
     }
     LedWs.ISetCurrentColors();
-//    Uart.Printf("%u\r", Delay);
-    chThdSleepMilliseconds(MS2ST(Delay));
+    chThdSleepMilliseconds(Delay);
 }
 
 uint32_t Effects_t::ICalcDelayN(uint32_t n) {
@@ -124,16 +125,17 @@ uint32_t Effects_t::ICalcDelayN(uint32_t n) {
 uint32_t LedChunk_t::ProcessAndGetDelay() {
     if(LedWs.ICurrentClr[Current] == Color) {   // Go on if done with current
         Effects.DesiredClr[Current] = clBlack;
-        GetNextCurrent();
+        GetNext(&Current);
         Effects.DesiredClr[Current] = Color;
     }
     // Iterate Leds
     uint32_t Delay = 0;
-    for(int i=Start; i<=End; i++) {
-        uint32_t tmp = Effects.ICalcDelayN(i);  // }
+    int n = Start;
+    do {
+        uint32_t tmp = Effects.ICalcDelayN(n);  // }
         if(tmp > Delay) Delay = tmp;            // } Calculate Delay
-        if(Delay!= 0) LedWs.ICurrentClr[i].Adjust(&Effects.DesiredClr[i]); // Adjust current color
-    }
+        if(Delay!= 0) LedWs.ICurrentClr[n].Adjust(&Effects.DesiredClr[n]); // Adjust current color
+    } while(GetNext(&n) == OK);
     return Delay;
 }
 
@@ -142,14 +144,16 @@ void LedChunk_t::StartOver() {
     Effects.DesiredClr[Current] = Color;
 }
 
-void LedChunk_t::GetNextCurrent() {
-    if(End > Start) {
-        Current++;
-        if(Current > End) Current = Start;
+uint8_t LedChunk_t::GetNext(int *PCurrent) {
+    int curr = *PCurrent;
+    if(curr == End) {
+        *PCurrent = Start;
+        return OVERFLOW;
     }
     else {
-        Current--;
-        if(Current < Start) Current = End;
+        if(End > Start) *PCurrent = curr + 1;
+        else *PCurrent = curr - 1;
+        return OK;
     }
 }
 #endif
