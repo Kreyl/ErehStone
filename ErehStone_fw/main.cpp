@@ -44,7 +44,7 @@ int main(void) {
         chThdSleepMilliseconds(2700);
     }
 
-    Effects.ChunkRunningRandom(clYellow, 1, 0);
+    Effects.ChunkRunningRandom(clGreen, 3, 45);
 
     // Main cycle
     App.ITask();

@@ -123,10 +123,11 @@ uint32_t Effects_t::ICalcDelayN(uint32_t n) {
 
 #if 1 // ============================== LedChunk ===============================
 uint32_t LedChunk_t::ProcessAndGetDelay() {
-    if(LedWs.ICurrentClr[Current] == Color) {   // Go on if done with current
-        Effects.DesiredClr[Current] = clBlack;
-        GetNext(&Current);
-        Effects.DesiredClr[Current] = Color;
+    if(LedWs.ICurrentClr[Head] == Color) {   // Go on if done with current
+        GetNext(&Head);
+        GetNext(&Tail);
+        Effects.DesiredClr[Head] = Color;
+        Effects.DesiredClr[Tail] = clBlack;
     }
     // Iterate Leds
     uint32_t Delay = 0;
@@ -140,8 +141,10 @@ uint32_t LedChunk_t::ProcessAndGetDelay() {
 }
 
 void LedChunk_t::StartOver() {
-    Current = Start; //Random(Start, End);
-    Effects.DesiredClr[Current] = Color;
+    Head = Start; //Random(Start, End);
+    Tail = GetPrevN(Head, NLeds);
+    Effects.DesiredClr[Head] = Color;
+    Effects.DesiredClr[Tail] = clBlack;
 }
 
 uint8_t LedChunk_t::GetNext(int *PCurrent) {
@@ -156,4 +159,18 @@ uint8_t LedChunk_t::GetNext(int *PCurrent) {
         return OK;
     }
 }
+
+int LedChunk_t::GetPrevN(int Current, int N) {
+    int Rslt;
+    if(End > Start) {
+        Rslt = Current - N;
+        if(Rslt < Start) Rslt += 1 + End - Start;
+    }
+    else {
+        Rslt = Current + N;
+        if(Rslt > Start) Rslt -= Start - End + 1;
+    }
+    return Rslt;
+}
+
 #endif

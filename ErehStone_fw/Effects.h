@@ -16,8 +16,9 @@ enum EffState_t {effIdle, effAllSmoothly, effChunkRunningRandom};
 
 class LedChunk_t {
 private:
-    int Current;
+    int Head, Tail;
     uint8_t GetNext(int *PCurrent);
+    int GetPrevN(int Current, int N);
 public:
     int Start, End, NLeds;
     Color_t Color;
@@ -25,7 +26,8 @@ public:
         Start = AStart;
         End = AEnd;
         NLeds = 1;
-        Current = AStart;
+        Head = AStart;
+        Tail = AEnd;
         Color = clBlack;
     }
     uint32_t ProcessAndGetDelay();
