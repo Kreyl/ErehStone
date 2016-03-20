@@ -38,10 +38,10 @@ int main(void) {
     Effects.Init();
 
     if(Radio.Init() == OK) {
-        Effects.AllTogetherSmoothly(clGreen, 45);
-        chEvtWaitAny(EVT_LEDS_DONE);
-        Effects.AllTogetherSmoothly(clBlack, 45);
-        chEvtWaitAny(EVT_LEDS_DONE);
+//        Effects.AllTogetherSmoothly(clGreen, 45);
+//        chEvtWaitAny(EVT_LEDS_DONE);
+//        Effects.AllTogetherSmoothly(clBlack, 45);
+//        chEvtWaitAny(EVT_LEDS_DONE);
     }
     else {
         Effects.AllTogetherNow(clRed);
@@ -57,7 +57,8 @@ int main(void) {
         Effects.AllTogetherNow(clBlack);
     }
 
-    Effects.ChunkRunningRandom(clGreen, 1, 45);
+//    Effects.ChunkRunningRandom(clGreen, 2, 180);
+    Effects.ChunkRunningRandom(clYellow, 2, 0);
 
     // Main cycle
     App.ITask();

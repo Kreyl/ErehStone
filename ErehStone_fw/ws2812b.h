@@ -13,7 +13,7 @@
 #include "color.h"
 #include "uart.h"
 
-#define LED_CNT         140   // Number of WS2812 LEDs
+#define LED_CNT         132   // Number of WS2812 LEDs
 
 #define LED_DMA_MODE    DMA_PRIORITY_HIGH \
                         | STM32_DMA_CR_MSIZE_HWORD \

@@ -10,11 +10,17 @@
 
 Effects_t Effects;
 
-#define CHUNK_CNT   3
+#define CHUNK_CNT   9
 static LedChunk_t Chunk[CHUNK_CNT] = {
-        {5, 0},
-        {6, 10},
-        {11, 16}
+        {0, 16},
+        {33, 17},
+        {34, 49},
+        {62, 50},
+        {63, 78},
+        {87, 79},
+        {88, 104},
+        {120, 105},
+        {121, 131},
 };
 
 static THD_WORKING_AREA(waEffectsThread, 256);
